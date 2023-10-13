@@ -71,7 +71,7 @@ As organizations navigate the evolving landscape of identity management, decentr
 **Ease of Use**: 'did:web' is often considered simpler to understand and implement. It operates over standard HTTPS protocols and can be easily managed with familiar, widely available, robust and cheap web server technology.
 
 **Simple discoverability**
-Compared to ledger-based did methods, which may require ledger-aware software not just for verification but even for basic discovery, resolving a did to its did document for did:web is straightforward. Discovering and resolving the did:web did document relies on proven DNS technology *) 
+Compared to ledger-based did methods, which may require ledger-aware software not just for verification but even for basic discovery, resolving a did to its did document for did:web is straightforward. Discovering and resolving the did:web did document relies on proven DNS technology
 Compared to standalone approaches like did:key and did:jwk, the did document can be requested by knowing only the identifier of the did, reducing the size of the id and allows to update the did document in the future.
 
 **No Specialized Infrastructure**: Unlike some other DID methods that require special nodes or decentralized networks, 'did:web' works on existing web infrastructure.
