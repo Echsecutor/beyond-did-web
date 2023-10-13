@@ -183,7 +183,7 @@ Achieving long-term non-repudiation involves:
 * Digitally signing each snapshot for added security.
 * Granting all partners and auditors access to the DID:web operator's git repository, allowing them to clone and retrieve the microledger whenever necessary.
 
-This methodology has gained acceptance as a compliance solution in Germany, and we recommend its consideration for ensuring long-term non-repudiation as an interim solution for productive systems.
+This methodology is accepted as a compliance solution in Germany and is considered to ensure long-term non-repudiation as an interim solution for productive systems.
 
 https://yes.com/docs/qes/2.5/index.html#_long_term_non_repudiation
 
