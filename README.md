@@ -183,7 +183,10 @@ We have to distinguish between
 When the did is used to refer to a did document, mentioning the version of that document might be necessary. This could be specified in the form of a version number/hash id (see [naming things with hashes](https://www.rfc-editor.org/rfc/rfc6920.html) for the general idea, there a lots of concrete variants on the theme).
 
 A very important use case for accessing a historical did document is this:
-When verifying a credential, the verifier does most likely not want to get the latest version of the issuers did doc, but the version that was current at the time he issued the credential.
+When verifying a credential, the verifier does most likely not want to get the latest version of the issuers did doc, but the version that was current at the time he issued the credential. So after requesting the did document, the following checks need to pass:
+
+- the issuance date of the credential is after the createdAt date of the did document of the issuer to ensure that the did document was already valid at the time of issuance
+- the next did document issuance date has to be greater than the issuance of the credential. This ensures that the key was not revoked at the time of issuance. There could be the case that the key is still in the new version of the document resulting in a valid signature. But then the correct usage version information was not provided by the issuer. In case there is no next version, the current version is the latest one and the key is still valid.
 
 ```mermaid
 flowchart TB
