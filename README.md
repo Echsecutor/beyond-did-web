@@ -14,10 +14,6 @@
 
 ## Abstract
 
-:::warning
-Clearly say here: We do not define a new did method!
-:::
-
 This paper will explore a few recent suggestions for enhancing the did:web method, in particular did:webplus and did:webs. Shortcomings of did:web are analyzed and a list of necessary features to overcome real problems is assembled. We strive to avoid the problem mentioned in the above comic and answer the question, whether the did web method can be improved without creating yet another (few) did methods.
 
 To begin, we will evaluate the current did:web specification. We will use our shared experiences implementing did:web and published articles to create an exhaustive list of the feature set and known gaps or security implications. Understanding business requirements and use cases is important. This paper explains the practical applications and of businesses needs that did:web aims to fill. A detailed discussion on the features of did:web is presented, drawing from experiences with existing working code and real-world applications.
@@ -28,41 +24,7 @@ Lastly, if needed, we hope to provide a cursory feature set to make the new did:
 
 ## Introduction
 
-:::warning
-
-- Why are we writing this paper?
-- Brief overview of the did:web method and its significance.
-- Background and Current State
-
-TODO: Make sure that all of the following points from our group discussion are covered in the following sections:
-
-### Requirements fullfilled in did:web
-
-- Getting did doc is easy
-- Trust from TLS + DNS
-- did doc updates (but its lacking in supporting multiple versions)
-
-### Lacking /optional/missing in did:web
-
-- integrity check
-  - check that the did doc matches the did ("zero trust")
-- access to historical did docs (timestamp, unique identifier)
-- "Audit trail"
-  - who changed what/when?
-  - In the sense of -> which key?
-- sequences of did docs
-- availability
-  - the did doc can only be provided directly by the exact domain/IP matching DNS records, not by some kind or archive or backup CDN because it collides with the match of the DOMAIN and ID matching requirement in did:web spec
-
-:::
-
 ### Why are organizations using did:web?
-
-:::warning
-
-- This sections and the following ones content should cover the "Requirements fullfilled in did:web" above.
-- likely the next few sections need to be merged
-  :::
 
 As organizations navigate the evolving landscape of identity management, decentralized identifiers (DIDs) are emerging as a promising solution to enhance security, privacy, and user control. Among the various DID methods available, 'did:web' serves as a practical starting point for those venturing into this decentralized realm. Easy to implement and compatible with existing web infrastructure, 'did:web' enables organizations to familiarize themselves with the core concepts of decentralized identities before diving into more complex and specialized DID methods. Below, we explore the key advantages of starting with 'did:web'.
 
@@ -79,12 +41,6 @@ Compared to standalone approaches like did:key and did:jwk, the did document can
 **Interoperability**: 'did:web' identifiers can be easily mapped to existing HTTPS URLs, making it straightforward to integrate with current web architectures.
 
 ### Main criticisms
-
-:::warning
-This section should cover the points from "Lacking /optional/missing in did:web" from above.
-
-To do: discuss did:dns improved binding between the dns and the did document
-:::
 
 Although did:web is easy to use and provides a good starting point into the decentralised identity space, using did:web also has some limitations, the three most prominent limitations being:
 
@@ -113,21 +69,7 @@ In the existing did:web specification, self-signing the did document is not mand
 
 This paper aims to critically examine the most glaring drawbacks of the current did:web implementation: namely, the lack of trustworthiness, absence of key rotation mechanisms, and concerns about did document integrity. To address these limitations, we will analyze two existing works that attempt to rectify these issues: the did:webplus and did:webs specifications. Through this analysis, we will assess how these specifications tackle the inherent shortcomings of did:web. Moreover, we will propose an alternative solution that enhances the existing did:web specification in a fully compliant manner, targeting the rectification of the aforementioned drawbacks.
 
-:::warning
-
-TODO:
-**Main issue that we're trying to address**: ...
-
-:::
-
 ## Feature requests: What is did:web lacking
-
-:::warning
-
-- Attacks/Failure scenarios
-  - Enhancing Security in did:web
-- Missing Features
-  :::
 
 ### Recover a did if the private key has gone bad
 
@@ -194,20 +136,7 @@ When snapshots of such a micro-ledger are stored on an immutable, publically acc
 
 This combination leverages the ease of web-based systems with the trustworthiness, security, and transparency of decentralized ledgers. It addresses the inherent challenges of the traditional DID:web method, offering a more robust and reliable solution for digital identity management.
 
-:::warning
-**Carsten**
-
-- Potential benefits and challenges of integrating GIT with did:web.
-  :::
-
 ## Solving Problems
-
-:::warning
-**Sebastian**
-
-Proposed solutions and methods to enhance security.
-Recommendations and Roadmap
-:::
 
 ### Key Rotation
 
@@ -266,53 +195,91 @@ flowchart TB
 
 ## Summary of did:web improving did methods
 
-This section introduces existing proposals that aim to solve some of the limitations of `did:web`.
+This section introduces existing proposals that aim to solve some of the
+limitations of `did:web`.
 
 ### did:webs
 
-The `did:webs` method [3] aims to provide the discoverability of `did:web` while introducing an additional trust anchor based on a chain of events that leverage some of the mechanisms proposed by KERI (Key Event Receipt Infrastructure) [5].
+The `did:webs` method [3] aims to benefit from the discoverability of `did:web`
+while providing a separate trust anchor based on KERI (_Key Event Receipt
+Infrastructure_) [5].
 
-`did:webs` identifiers follow a structure similar to `did:web`, with an additional _Autonomic Identifier_ (AID) derived from a KERI inception event appended to the identifier, for example: `did:webs:example.com:some:path:aid`
+`did:webs` identifiers follow a structure similar to `did:web`, with an
+additional KERI _Autonomic Identifier_ (AID) appended at the end, for example:
+`did:webs:example.com:some:path:12124313423525`
 
-The KERI AID is strongly bound to a cryptographic keypair at inception time. The AID is self-certifying and becomes the fist item in the append-only chain of events known as the KEL (Key Event Log). The KEL provides a secure mechanism to perform updates in the DID document that are chained together and can be validated against the inception event that is encoded in the DID itself.
+In KERI, an inception event creates the initial key pair that establishes the
+root of trust, and the _Autonomic Identifier_ (AID) is derived from the
+inception event's hash. The AID is self-certifying and becomes the first item in
+an append-only chain of events known as the _Key Event Log_ (KEL). The KEL
+provides a secure mechanism to perform updates in the DID document that are
+chained together and can be validated against the inception event that is
+encoded in the DID itself.
 
-(Talk about how events link with each other)
-(Do we want graphics?)
+(Add a diagram)
 
-Like `did:web`, `did:webs` uses the HTTPS protocol to provide access to the latest version of the DID document. In addition to it, `did:webs` publishes the entire stream of KEL events on a separate URL, making it possible for DID resolvers to reconstruct and validate the content of the DID document at any point in time.
+Like `did:web`, `did:webs` uses the HTTPS protocol to provide access to DID
+documents. URLs are constructed using the domain name and path in the form
+`https://domain.tld/some/path/aid`, then appending `/did.json` to obtain the
+latest version of the DID document. Additionally, `did:webs` publishes the
+entire stream of KEL events on a separate URL (`/keri.cesr`), making it possible
+for DID resolvers to reconstruct and validate the content of the DID document at
+any point in time.
 
-Since the AID represents the inception event tied to the subject's identity, the AID together with the KEL are suficient to generate the DID document associated with the subject, independently from the `did:webs`'s DID itself. This property makes it possible to, for example, migrate a `did:webs` to another web domain, or even to another DID method by using the AID as the unique identifier and the KERI event stream for validation. From this perspective, `did:webs` could be seen as a method for exposing a set of KERI mechanisms via HTTPS.
+Since the AID represents the inception event tied to the subject's identity, the
+AID together with the KEL are suficient to generate the DID document associated
+with the subject, independently from the `did:webs`'s DID itself. This property
+makes it possible to, for example, migrate a `did:webs` to another web domain,
+or even to another DID method by using the AID as the unique identifier and the
+KERI event stream for validation. From this perspective, `did:webs` could be
+seen as a method for exposing a set of KERI mechanisms via HTTPS.
 
-(Briefly mention additional features: whois folder, Witnesses, Signed files, security, ...)
+(Briefly mention additional features: whois folder, Witnesses, Signed files,
+security, ...)
 
 ### did:webplus
 
-The `did:webplus` method [4] augments `did:web` by maintaining an immutable and auditable history of DID document versions.
+The `did:webplus` method [4] augments `did:web` by maintaining an immutable and
+auditable history of DID document versions.
 
-This is realized by implementing a microledger in which the signature of the initial document is incorporated into the DID itself, with each subsequent document referencing the signature of its predecessor.
-Documents also contain additional attributes, including a monotonically increasing _version number_ and a _start of validity_ timestamp, which effectively establish a totally ordered sequence of DID documents with non-overlapping periods of validity.
+This is realized by implementing a microledger in which the signature of the
+initial document is incorporated into the DID itself, with each subsequent
+document referencing the signature of its predecessor. Documents also contain
+additional attributes, including a monotonically increasing _version number_ and
+a _start of validity_ timestamp, which effectively establish a totally ordered
+sequence of DID documents with non-overlapping periods of validity.
 
-Identifiers in `did:webplus` are similar to the ones in `did:web`, with an additional field corresponding to the self-signature of the initial document, for example: `did:webplus:example.com:0B2LYBZ06Bn0dq7ALo3kG5ie20sQKvv7yzmbA8KtKExC4PRiZ2io-hPxxOy-mQ2qb4yuGdAK0eKvipqcBlZSArDg`.
+Identifiers in `did:webplus` are similar to the ones in `did:web`, with an
+additional field corresponding to the self-signature of the initial document,
+for example:
+`did:webplus:example.com:0B2LYBZ06Bn0dq7ALo3kG5ie20sQKvv7yzmbA8KtKExC4PRiZ2io-hPxxOy-mQ2qb4yuGdAK0eKvipqcBlZSArDg`.
 
-When the DID controller produces a signature, the DID URL specifying the signing key must include the standard query parameters `versionId`, `versionTime` and `hl` [6]. This uniquely identifies the document version within the ledger.
+When the DID controller produces a signature, the DID URL specifying the signing
+key must include the standard query parameters `versionId`, `versionTime` and
+`hl` [6]. This uniquely identifies the document version within the ledger.
 
-To our knowledge, a draft method specification of `did:webplus` has not yet been published, but an overview of the method and a prototype implementation are available [4].
+To our knowledge, a draft method specification of `did:webplus` has not yet been
+published, but an overview of the method and a prototype implementation are
+available [4].
 
 #### Embedding self-signatures
 
-To uniquely identify and link document versions, a self-signature of the document content is computed and embedded in the document itself. This creates a circular dependency problem: the signature should only be computed once the content will not be further modified, so it is not possible to then modify the document to include the signature inside it.
+To uniquely identify and link document versions, a self-signature of the
+document content is computed and embedded in the document itself. This creates a
+circular dependency problem: the signature should only be computed once the
+content will not be further modified, so it is not possible to then modify the
+document to include the signature inside it.
 
-`did:webplus` solves this problem by reserving "slots" in the document that are filled with zeroes. The signature is then generated on this data, and the zeroes are then replaced with the computed signature to build the final self-signed structure.
-During the signature verification process the inverse operation is performed, extracting the signature first, then filling the slots with zeroes and computing the signature.
+`did:webplus` solves this problem by reserving "slots" in the document that are
+filled with zeroes. The signature is then generated on this data, and the zeroes
+are then replaced with the computed signature to build the final self-signed
+structure. During the signature verification process the inverse operation is
+performed, extracting the signature first, then filling the slots with zeroes
+and computing the signature.
 
 (More features: authorization)
 
-:::danger
-
-### DID Web 2.0
-
-We will state that the ideas from the did web 2.0 advance reading paper are pretty implemented in in did:webplus and obviously webplus is much further in terms of spelling things out, so we focus on this one.
-:::
+### Compatibility with `did:web`
 
 ## DID Web with attached validation
 
@@ -382,38 +349,6 @@ The storage of did documents needs more space than just storing the changes in c
 In some scenarios the amount of validation can be huge when the holder had made a lot of key rotations after it got its credential. For this case it would be more effective to make jumps in the chain of versions. But to do so, the owner has to sign a claim that version five is in the trust chain of version two, when it got signed by a key of version two. But this would violate the lifespan of the key from version two since it got rotated when creating version three. And it's also not good practice to not rotate the key that is allowing to update a did document.
 
 ## Evaluation & Comparison of methods
-
-:::warning
-
-Convert this:
-https://docs.google.com/spreadsheets/d/1xOG_bAHKdM696c1bDoovN0GFMyDaw2z0hChdfTfR3o0/edit?usp=sharing
-
-into text. Try to extract a concise/simple/small table in the end
-
-:::
-
-:::danger
-
-### did:webs compatibility with did:web
-
-from https://trustoverip.github.io/tswg-did-method-webs-specification/ :
-
-> The did:web version of the DIDs are the same (minus the s) and point to the same did.json file, but have no knowledge of the did.keri file.
-
-### did:webplus
-
-### did:web2.0
-
-- uses a new verification relationship "recover"
-- self cerififying is covered via the hash value, instead of using the [hashlink](https://www.w3.org/TR/did-core/#content-integrity-protection)
-- new field to point to the previous field. This feature seems not to be relevant for an case (personal opinion)
-
-Why are there new did methods?
-
-how can we just improve did:web without making a new did method?
-
-- the deletion/deactivation method of the current did:web forces you to delete the did.json file. In case the user only wants to deactivate the key, but still allow the public key to be available for signature verification, the deactivate status has to be requested via the documented metadata. The did core specification is [mentioning](https://www.w3.org/TR/did-core/#did-document-metadata) that when a did document is revoked, the `revoked` value in the document metadata should be set to `true`. This can only be achieved when the `did.json` file is served dynamically, otherwise we are not able to fetch the metadata.
-  :::
 
 ## Outlook / Future Research
 
