@@ -13,10 +13,6 @@
 
 ## Abstract
 
-:::warning
-Clearly say here: We do not define a new did method!
-:::
-
 This paper will explore a few recent suggestions for enhancing the did:web method, in particular did:webplus and did:webs. Shortcomings of did:web are analyzed and a list of necessary features to overcome real problems is assembled. We strive to avoid the problem mentioned in the above comic and answer the question, whether the did web method can be improved without creating yet another (few) did methods.
 
 
@@ -31,40 +27,10 @@ Lastly, if needed, we hope to provide a cursory feature set to make the new did:
 
 ## Introduction
 
-:::warning
-- Why are we writing this paper?
-- Brief overview of the did:web method and its significance.
-- Background and Current State
-
-TODO: Make sure that all of the following points from our group discussion are covered in the following sections:
-### Requirements fullfilled in did:web
-- Getting did doc is easy
-- Trust from TLS + DNS
-- did doc updates (but its lacking in supporting multiple versions)
-
-
-### Lacking /optional/missing in did:web
-- integrity check
-    - check that the did doc matches the did ("zero trust")
-- access to historical did docs (timestamp, unique identifier)
-- "Audit trail"
-    - who changed what/when?
-    - In the sense of -> which key?
-- sequences of did docs
-- availability
-    - the did doc can only be provided directly by the exact domain/IP matching DNS records, not by some kind or archive or backup CDN because it collides with the match of the DOMAIN and ID matching requirement in did:web spec
-
-:::
-
-
 
 
 ### Why are organizations using did:web?
 
-:::warning
-- This sections and the following ones content should cover the "Requirements fullfilled in did:web" above.
-- likely the next few sections need to be merged
-:::
 
 As organizations navigate the evolving landscape of identity management, decentralized identifiers (DIDs) are emerging as a promising solution to enhance security, privacy, and user control. Among the various DID methods available, 'did:web' serves as a practical starting point for those venturing into this decentralized realm. Easy to implement and compatible with existing web infrastructure, 'did:web' enables organizations to familiarize themselves with the core concepts of decentralized identities before diving into more complex and specialized DID methods. Below, we explore the key advantages of starting with 'did:web'.
 
@@ -81,12 +47,6 @@ Compared to standalone approaches like did:key and did:jwk, the did document can
 **Interoperability**: 'did:web' identifiers can be easily mapped to existing HTTPS URLs, making it straightforward to integrate with current web architectures.
 
 ### Main criticisms ###
-
-:::warning
-This section should cover the points from "Lacking /optional/missing in did:web" from above.
-
-To do: discuss did:dns improved binding between the dns and the did document
-:::
 
 Although did:web is easy to use and provides a good starting point into the decentralised identity space, using did:web also has some limitations, the three most prominent limitations being:
 1) No trustworthiness
@@ -116,20 +76,8 @@ This paper aims to critically examine the most glaring drawbacks of the current 
 
 
 
-:::warning
-
-TODO:
-**Main issue that we're trying to address**: ...
-
-:::
-
 ## Feature requests: What is did:web lacking
 
-:::warning
-- Attacks/Failure scenarios
-    - Enhancing Security in did:web
-- Missing Features
-:::
 
 ### Recover a did if the private key has gone bad
 
@@ -192,26 +140,13 @@ More on Long-term Non-repudiation
 KERI's introduction of witness networks offers a more abstract and sophisticated approach for achieving long-term non-repudiation. However, its implementation can be more challenging compared to the aforementioned method.
 
 
-
 Bleding a self certifying identifiers and a robust microledger with DID:web transforms DID:web from a very basic approach to an auditable solution including tamper-proof timesamping and sequencing of DID document configuration events. 
 
 When snapshots of such a micro-ledger are stored on an immutable, publically accessible system such as "git" deletion and duplicity attacks can be mitigated. KERI introduced the concept of witness networks which is a more abstract and advanced approach. 
 
 This combination leverages the ease of web-based systems with the trustworthiness, security, and transparency of decentralized ledgers. It addresses the inherent challenges of the traditional DID:web method, offering a more robust and reliable solution for digital identity management.
 
-:::warning
-**Carsten**
-- Potential benefits and challenges of integrating GIT with did:web.
-:::
-
 ## Solving Problems
-
-:::warning
-**Sebastian**
-
-Proposed solutions and methods to enhance security.
-Recommendations and Roadmap
-:::
 
 ### Key Rotation
 
@@ -435,35 +370,7 @@ In some scenarios the amount of validation can be huge when the holder had made 
 
 ## Evaluation & Comparison of methods
 
-:::warning
 
-Convert this:
-https://docs.google.com/spreadsheets/d/1xOG_bAHKdM696c1bDoovN0GFMyDaw2z0hChdfTfR3o0/edit?usp=sharing
-
-into text. Try to extract a concise/simple/small table in the end
-
-:::
-
-
-
-:::danger
-
-### did:webs compatibility with did:web
-
-from https://trustoverip.github.io/tswg-did-method-webs-specification/ :
-> The did:web version of the DIDs are the same (minus the s) and point to the same did.json file, but have no knowledge of the did.keri file.
-
-### did:webplus
-### did:web2.0
-- uses a new verification relationship "recover"
-- self cerififying is covered via the hash value, instead of using the [hashlink](https://www.w3.org/TR/did-core/#content-integrity-protection)
-- new field to point to the previous field. This feature seems not to be relevant for an case (personal opinion)
-
-Why are there new did methods?
-
-how can we just improve did:web without making a new did method?
-- the deletion/deactivation method of the current did:web forces you to delete the did.json file. In case the user only wants to deactivate the key, but still allow the public key to be available for signature verification, the deactivate status has to be requested via the documented metadata. The did core specification is [mentioning](https://www.w3.org/TR/did-core/#did-document-metadata) that when a did document is revoked, the `revoked` value in the document metadata should be set to `true`. This can only be achieved when the `did.json` file is served dynamically, otherwise we are not able to fetch the metadata.
-:::
 
 
 ## Outlook / Future Research
