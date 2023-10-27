@@ -8,7 +8,6 @@
 
 - Hans Boone <hans.boone@unifiedpost.com>
 - Dan Carez <carezd@gmail.com>
-- Jen Schreiber
 - Dr. Sebastian Schmittner <sebastian.schmittner@eecc.de>
 - Dr. Carsten Stoecker <carsten.stoecker@spherity.com>
 
