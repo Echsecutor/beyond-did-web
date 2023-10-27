@@ -206,7 +206,6 @@ flowchart TB
     did3>did:METHOD:ID?timestamp=1695241141] --> v3
 ```
 
-
 ## Summary of did:web improving did methods
 
 This section introduces existing proposals that aim to solve some of the
@@ -219,23 +218,23 @@ while providing a separate trust anchor based on KERI (_Key Event Receipt
 Infrastructure_) [5].
 
 `did:webs` identifiers follow a structure similar to `did:web`, with an
-additional _Autonomic Identifier_ (AID) obtained from KERI appended at the end,
-for example: `did:webs:example.com:some:path:12124313423525`
+additional KERI _Autonomic Identifier_ (AID) appended at the end, for example:
+`did:webs:example.com:some:path:12124313423525`
 
-In KERI, an inception event creates the initial key pair that sets the root of
-trust, and the _Autonomous Identifier_ (AID) is derived from the inception
-event's hash. The AID is self-certifying and becomes the first item in an
-append-only chain of events known as the KEL (_Key Event Log_). The KEL provides
-a secure mechanism to perform updates in the DID document that are chained
-together and can be validated against the inception event that is encoded in the
-DID itself.
+In KERI, an inception event creates the initial key pair that establishes the
+root of trust, and the _Autonomic Identifier_ (AID) is derived from the
+inception event's hash. The AID is self-certifying and becomes the first item in
+an append-only chain of events known as the _Key Event Log_ (KEL). The KEL
+provides a secure mechanism to perform updates in the DID document that are
+chained together and can be validated against the inception event that is
+encoded in the DID itself.
 
 (Add a diagram)
 
 Like `did:web`, `did:webs` uses the HTTPS protocol to provide access to DID
-documents, with URLs formed by first encoding the domain name and path in the
-form `https://domain.tld/some/path/aid`, then appending `/did.json` to obtain
-the latest version of the DID document. Additionally, `did:webs` publishes the
+documents. URLs are constructed using the domain name and path in the form
+`https://domain.tld/some/path/aid`, then appending `/did.json` to obtain the
+latest version of the DID document. Additionally, `did:webs` publishes the
 entire stream of KEL events on a separate URL (`/keri.cesr`), making it possible
 for DID resolvers to reconstruct and validate the content of the DID document at
 any point in time.
@@ -293,14 +292,7 @@ and computing the signature.
 
 (More features: authorization)
 
-:::danger
-
-### DID Web 2.0
-
-We will state that the ideas from the did web 2.0 advance reading paper are
-pretty implemented in in did:webplus and obviously webplus is much further in
-terms of spelling things out, so we focus on this one. :::
-
+### Compatibility with `did:web`
 
 
 
