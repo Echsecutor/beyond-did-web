@@ -46,14 +46,14 @@ did:web\* the best it can be!
 As organizations navigate the evolving landscape of identity management,
 decentralized identifiers (DIDs) are emerging as a promising solution to enhance
 security, privacy, and user control. Among the various DID methods available,
-'did:web' serves as a practical starting point for those venturing into this
+`did:web` serves as a practical starting point for those venturing into this
 decentralized realm. Easy to implement and compatible with existing web
-infrastructure, 'did:web' enables organizations to familiarize themselves with
+infrastructure, `did:web` enables organizations to familiarize themselves with
 the core concepts of decentralized identities before diving into more complex
 and specialized DID methods. Below, we explore the key advantages of starting
-with 'did:web'.
+with `did:web`.
 
-**Ease of Use**: 'did:web' is often considered simpler to understand and
+**Ease of Use**: `did:web` is often considered simpler to understand and
 implement. It operates over standard HTTPS protocols and can be easily managed
 with familiar, widely available, robust and cheap web server technology.
 
@@ -66,13 +66,13 @@ document can be requested by knowing only the identifier of the did, reducing
 the size of the id and allows to update the DID document in the future.
 
 **No Specialized Infrastructure**: Unlike some other DID methods that require
-special nodes or decentralized networks, 'did:web' works on existing web
+special nodes or decentralized networks, `did:web` works on existing web
 infrastructure.
 
-**Low Cost**: Unlike ledger based DID methods, 'did:web' does not have an
+**Low Cost**: Unlike ledger based DID methods, `did:web` does not have an
 associated cost other than maintaining a web server.
 
-**Interoperability**: 'did:web' identifiers can be easily mapped to existing
+**Interoperability**: `did:web` identifiers can be easily mapped to existing
 HTTPS URLs, making it straightforward to integrate with current web
 architectures.
 
@@ -99,9 +99,9 @@ domain name to an IP address and TLS secures the transport mechanism, they do
 not necessarily enhance the trustworthiness of the information. TLS merely
 verifies that the Fully Qualified Domain Name matches the common name in the
 certificate. Various levels of assurance can be achieved through different types
-of TLS certificates, ranging from 'no assurance' with Let's Encrypt, to 'medium
-assurance' with extended validation certificates, and 'high assurance' with QWAC
-certificates.
+of TLS certificates, ranging from `no assurance` with Let's Encrypt, to
+`medium assurance` with extended validation certificates, and `high assurance`
+with QWAC certificates.
 
 Even with different levels of assurance offered by various TLS certificates,
 this information is not factored into the trustworthiness of the DID document
@@ -146,46 +146,66 @@ rectification of the aforementioned drawbacks.
 
 ## Feature requests: What is did:web lacking
 
-### Recover a DID if the private key has gone bad
+The following chapter is pointing out the features that are missing in the
+did:web method.
 
-In case a private key gets
+### Cryptographic ownership binding
 
-- lost, i.e. is no longer available to the legitimate owner but likely also not
-  to anybody else
-- compromised, i.e. accessible by an unauthorized actor
-- out dated, e.g. because the key length or, more generally, the algorithm used
-  are no longer considered secure enough
+To proof the ownership of a DID, the owner performs a signature with the private
+key that is linked to the DID. The verifier can verify the signature with the
+public key that is published in the DID document. In cases like `did:key` or
+`did:jwk` the public key is bounded to the ID of the DID, same goes for
+`did:ethr` where the verifier is able to validate the ledger. But `did:web` is
+missing the binding between the ID of the DID and the public keys to proof
+ownership. Here the owner or the controller of the DID document is the one who
+has access to either the web server where the DID document is hosted or to the
+DNS servers to point to another web server. The owner of these resources is able
+to publish a new DID document and therefore to change the public keys. The
+attacker is not able to get access to the old used private key of the DID, but
+can hijack the identity to sign new credentials or authenticate with this ID to
+other services.
 
-a DID needs to be associated with a new key pair. Such that
+On the other hand this missing binding allows the owner to rotate the keys in
+case he lost access to the current private key, like the typical "passwort
+forget" functionality. The risk of locking out by the private key is a feature
+other DID methods like `did:key` or `did:jwk` are missing. But as mentioned the
+ownership to the DNS and web servers is a risk that has to be considered.
 
-- Signatures by the DID before the private key went bad remain valid
-- Signatures by the did's bad key after it went bad are to be considered invalid
-- The DID can still sign (with a new key)
+### Unique identifiers for the objects
 
-This applies in particular for VCs issued by the did, but also to e.g.
-presentations signed by the did.
+Each element inside the DID document has to have a unique identifier, because it
+needs to be referenced. In case a credential is signed by a key, the DID
+document including the public key can also include multiple public keys. A X509
+certificate does not need a specific identifier of the public key, because the
+certificate only includes one public key, so the identifier of the certificate
+and the public key is the same. It is also not a good way to loop over all the
+public keys in the DID document to check if the signature is valid with one of
+them. Instead the public key will be referenced in the issued credential like
+`did:web:example.com#key-1`. This will block the identifier `key-1` in the
+future, because `did:web` is not supporting versioning of the documents. The
+owner is unable to publish a new public key under the same identifier because it
+would make the old public key unavailable. Other DID methods that support
+versioning allow to query a public key by the identifier and the version id or
+time like `did:ethr:123456#key-1?versionId=2` and a new public key like
+`did:ethr:123456#key-1?versionId=2`. This is important when a use case enforces
+you to publish a public key under a specific identifier. For use cases like
+authentication this feature sounds irrelevant because you need always the latest
+public key to verify the response. But in case of auditability you want to query
+older public keys to proof that the signature was valid at the time of issuance
+without forcing you to store the public key in your own archive.
 
-### Update service endpoints of a DID document
+### did:web auditability
 
-Service endpoints provided by a DID might change over time, hence a typical did
-document update not related to cryptografic material is changing the list of
-published service endpoints. In case of self sovereign identity the issuer needs
-to add a new communication endpoint because of a new supported protocol or the
-endpoint of an existing one has been transfered to a new domain.
-
-### Practical business applications and feature requirements of businesses in relation to did:web.
-
-### DID:web auditability
-
-In the area of software development for compliance solutions, the integrity,
-transparency, and verifiability of data are foundational requirements. Essential
-"compliance controls" such as Confidentiality, Integrity, Availability,
-Non-repudiation, Attributability, Tamper-proof Timestamping, Sequencing of
-Events, Long-term Archiving, and Proof Preservation form the backbone of a
-robust compliance solution. These controls ensure that sensitive information
-remains protected, actions are traceable to their sources, and evidence of
-events or decisions is preserved for future reference or audits. Specifically,
-the Auditability of DID documents plays a pivotal role in this context.
+did:web In the area of software development for compliance solutions, the
+integrity, transparency, and verifiability of data are foundational
+requirements. Essential "compliance controls" such as Confidentiality,
+Integrity, Availability, Non-repudiation, Attributability, Tamper-proof
+Timestamping, Sequencing of Events, Long-term Archiving, and Proof Preservation
+form the backbone of a robust compliance solution. These controls ensure that
+sensitive information remains protected, actions are traceable to their sources,
+and evidence of events or decisions is preserved for future reference or audits.
+Specifically, the Auditability of DID documents plays a pivotal role in this
+context.
 
 It guarantees that every piece of data, once entered, remains transparent and
 immutable, establishing a clear, verifiable record. This is especially vital for
@@ -196,13 +216,13 @@ to provide compliance solutions, embedding these auditability features is not
 just about meeting regulatory standards; it's about ensuring long-term trust,
 security, accountability, and operational excellence.
 
-DID:web, while being easy to implement, has inherent limitations when it comes
+did:web, while being easy to implement, has inherent limitations when it comes
 to providing full auditability features for the entire DID lifecycle, especially
 concerning key rotations and DID document configuration events.
 
 Here's why:
 
-- Centralized Nature: DID:web identifiers are essentially URLs, and they rely on
+- Centralized Nature: did:web identifiers are essentially URLs, and they rely on
   the traditional web infrastructure. This means that the data is stored on
   centralized servers or web domains. Also all the information are public
   available to read for everyone giving more transparency and the immutability
@@ -213,28 +233,28 @@ Here's why:
   equal results.
 - Lack of Immutable History: In decentralized ledger systems, every change or
   transaction is recorded in a way that it cannot be altered, ensuring a
-  permanent and transparent history. DID:web, due to its reliance on the
+  permanent and transparent history. did:web, due to its reliance on the
   traditional web, doesn't inherently provide this feature. If a DID document is
   updated or a key is rotated, the previous state might be overwritten without
   any immutable record of the change.
-- Vulnerability to Tampering: Since DID:web documents are hosted on web servers,
+- Vulnerability to Tampering: Since did:web documents are hosted on web servers,
   they are susceptible to common web vulnerabilities. Malicious actors, if they
   gain access, can alter or delete historical data, making it challenging to
   audit the entire lifecycle of the DID.
-- Dependence on Web Hosting Providers: The availability and integrity of DID:web
+- Dependence on Web Hosting Providers: The availability and integrity of did:web
   documents are tied to the reliability of web hosting providers. These
   providers can experience downtime, data losses, or even decide to terminate
   services, leading to potential loss of historical data.
 - Absence of Native Timestamping: Unlike some decentralized systems that
-  inherently timestamp every transaction, DID:web doesn't offer tamper-proof
+  inherently timestamp every transaction, did:web doesn't offer tamper-proof
   timestamping. This makes it impossible to verify the exact sequence and timing
   of events in the DID's lifecycle.
 - Potential for Data Inconsistency: Without a decentralized consensus mechanism,
-  there's a risk of data inconsistency in DID:web. Different servers might have
+  there's a risk of data inconsistency in did:web. Different servers might have
   different versions of a DID document, complicating the audit process.
 
 Integrating self-certifying identifiers with a robust microledger enhances the
-DID:web method, transforming it from a rudimentary system to a comprehensive,
+did:web method, transforming it from a rudimentary system to a comprehensive,
 auditable solution that includes timestamping and sequencing of DID document
 configuration events.
 
@@ -249,15 +269,13 @@ Achieving long-term non-repudiation involves:
 - Storing each snapshot in a git repository.
 - Ensuring the system's resilience, even in scenarios like company bankruptcy.
 - Digitally signing each snapshot for added security.
-- Granting all partners and auditors access to the DID:web operator's git
+- Granting all partners and auditors access to the did:web operator's git
   repository, allowing them to clone and retrieve the microledger whenever
   necessary.
 
 This methodology is accepted as a compliance solution in Germany and is
 considered to ensure long-term non-repudiation as an interim solution for
-productive systems.
-
-https://yes.com/docs/qes/2.5/index.html#_long_term_non_repudiation
+productive systems.[2]
 
 More on Long-term Non-repudiation
 
@@ -265,8 +283,8 @@ KERI's introduction of witness networks offers a more abstract and sophisticated
 approach for achieving long-term non-repudiation. However, its implementation
 can be more challenging compared to the aforementioned method.
 
-Being a self certifying identifiers and a robust microledger with DID:web
-transforms DID:web from a very basic approach to an auditable solution including
+Being a self certifying identifiers and a robust microledger with did:web
+transforms did:web from a very basic approach to an auditable solution including
 tamper-proof timestamping and sequencing of DID document configuration events.
 
 When snapshots of such a micro-ledger are stored on an immutable, publicly
@@ -276,7 +294,7 @@ advanced approach.
 
 This combination leverages the ease of web-based systems with the
 trustworthiness, security, and transparency of decentralized ledgers. It
-addresses the inherent challenges of the traditional DID:web method, offering a
+addresses the inherent challenges of the traditional did:web method, offering a
 more robust and reliable solution for digital identity management.
 
 ## Solving Problems
@@ -324,7 +342,7 @@ subgraph did:webs KERI
 end
 
 subgraph did:webplus / DID web 2.0
-    vn[Latest DID doc] -.-> v3[did doc v3] -- prevDIDDocumentSelfSignature / previous --> v2[did doc v2] -- prevDIDDocumentSelfSignature / previous -->  v1[Inception event]
+    vn[Latest DID doc] -.-> v3[DID doc v3] -- prevDIDDocumentSelfSignature / previous --> v2[DID doc v2] -- prevDIDDocumentSelfSignature / previous -->  v1[Inception event]
 end
 
 ```
@@ -373,7 +391,7 @@ checks need to pass:
 
 ```mermaid
 flowchart TB
-    vn[Latest DID doc] -.-> v3[did doc v3] -- previous --> v2[did doc v2] -- previous -->  v1[Genesis DID doc]
+    vn[Latest DID doc] -.-> v3[DID doc v3] -- previous --> v2[DID doc v2] -- previous -->  v1[Genesis DID doc]
     did>did:METHOD:ID] --> vn
     did2>did:METHOD:ID?version=2] --> v2
     did3>did:METHOD:ID?timestamp=1695241141] --> v3
@@ -470,7 +488,7 @@ and computing the signature.
 ## DID Web with attached validation
 
 During the Rebooting Web of Trust event we also tried to find a way to make the
-did documents verifiable without breaking the actual schema of a valid did:web
+DID documents verifiable without breaking the actual schema of a valid did:web
 document like `did:webplus` is doing. Another requirement was to just use
 technologies that have already a high adoption.
 
@@ -502,7 +520,7 @@ used public key was valid during the issuance process. Compared to other
 formats, like X509 certificates, DID documents do not have fields defining the
 lifespan of a DID document and the validity of the content. To solve this
 problem, we can use the
-[did document metadata](https://www.w3.org/TR/did-core/#did-document-metadata).
+[DID document metadata](https://www.w3.org/TR/did-core/#did-document-metadata).
 In this object the field
 [nextUpdate](https://www.w3.org/TR/did-spec-registries/#nextupdate) can include
 a time stamp. If so, a newer version of the DID document exists and this time
@@ -524,7 +542,7 @@ endpoint to the DID document like:
 ```
 
 A `versionId` or `versionTime` query can be passed to the endpoint to get the
-did document metadata for a specific version. If none is passed, the metadata
+DID document metadata for a specific version. If none is passed, the metadata
 from the latest DID document are returned. The type `didDocumentMetaData` is not
 yet included in the
 [Did spec registry](https://www.w3.org/TR/did-spec-registries/#service-types).
@@ -601,7 +619,7 @@ the whole chain of trust is broken and the validation process has failed.
 The storage of DID documents needs more space than just storing the changes in
 case only one key is rotated but the other nine keys are still included. Is is a
 downside for the owner of the DID but also for the holder. It has to request all
-did documents step by step instead of downloading all DID documents in a list.
+DID documents step by step instead of downloading all DID documents in a list.
 This could be done via another service endpoint, requesting a list of did
 documents and proofs so it can be validated online.
 
@@ -612,7 +630,7 @@ has to sign a claim that version five is in the trust chain of version two, when
 it got signed by a key of version two. But this would violate the lifespan of
 the key from version two since it got rotated when creating version three. And
 it's also not good practice to not rotate the key that is allowing to update a
-did document.
+DID document.
 
 ## Evaluation & Comparison of methods
 
@@ -638,9 +656,8 @@ facilitating this great conference which enabled us to work on this paper.
 ## References
 
 [1] did:web method https://w3c-ccg.github.io/did-method-web/  
-[2] Zagidulin, Goering, Caballero: RWOT 12 advance reading paper "DID Web
-2.0"https://github.com/WebOfTrustInfo/rwot12-cologne/blob/main/advance-readings/did-web-2.0.md  
-[3] did:webs method
+[2] https://yes.com/docs/qes/2.5/index.html#_long_term_non_repudiation [3]
+did:webs method
 https://trustoverip.github.io/tswg-did-method-webs-specification  
 [4] did:webplus method https://github.com/LedgerDomain/did-webplus  
 [5] Key Event Receipt Infrastructure (KERI)
